@@ -1,6 +1,7 @@
 import psycopg2
 from collections import namedtuple
-from datetime import date
+from datetime import date, datetime
+from utilities import format_sample_time
 
 json_data = {
   "currencyTypeName": "Mirror of Kalandra",
@@ -13,7 +14,8 @@ json_data = {
 }
 
 def db_insert_currency(currency_data):
-    
+    sample_time_utc = format_sample_time(currency_data["receive"]["sample_time_utc"])
+
     connection = psycopg2.connect(
         dbname="poe_currency",
         user="adam",
@@ -22,7 +24,7 @@ def db_insert_currency(currency_data):
         )
     cursor = connection.cursor()
     cursor.execute("""
-    INSERT INTO currency_poe (
+    INSERT INTO currency_rates (
         currency_type_name, 
         sample_time_utc, 
         count, 
@@ -36,11 +38,11 @@ def db_insert_currency(currency_data):
         value_chaos = EXCLUDED.value_chaos,
         detailsId = EXCLUDED.detailsId;
     """, (
-    currency_data.currencyTypeName,
-    currency_data.receive.sample_time_utc,
-    currency_data.receive.count,
-    currency_data.receive.value,
-    currency_data.detailsId
+    currency_data['currencyTypeName'],
+    sample_time_utc,
+    currency_data['receive']['count'],
+    currency_data['receive']['value'],
+    currency_data['detailsId']
     ))
     connection.commit()
 
