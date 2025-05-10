@@ -8,8 +8,7 @@ def format_sample_time(time_str):
     sample_time_hour = sample_time_utc.replace(minute=0, second=0, microsecond=0)
     return sample_time_hour
 
-def reformat_dic(currency_response):
-    currency_dic = decode_json(currency_response)
+def reformat_dic(currency_dic):
     return {
         "currency_type_name": currency_dic['currencyTypeName'],
         "sample_time_utc": currency_dic["receive"]["sample_time_utc"],
@@ -17,15 +16,6 @@ def reformat_dic(currency_response):
         "value": currency_dic["receive"]["value"],
         "details_id": currency_dic["detailsId"]
     }
-
-def decode_json(sample):
-
-    try:
-        dic_sample = json.loads(sample)
-    except:
-        return dic_sample
-
-    return sample
 
 def reformat_all_data(currency_items): 
     formatted_items = []
