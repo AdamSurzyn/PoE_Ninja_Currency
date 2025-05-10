@@ -1,6 +1,4 @@
 import psycopg2
-from collections import namedtuple
-from datetime import date, datetime
 from utilities import format_sample_time
 
 json_data = {
