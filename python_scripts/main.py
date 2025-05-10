@@ -8,13 +8,18 @@ SETTLERS_PARAMS = {
     'league': 'Settlers',
     'type': 'Currency'  
 }
+def main():
+    try:
+        data = get_poe_data(BASE_URL, SETTLERS_PARAMS)
+        if not data:
+            print("No data received.")
+            return
 
-data = get_poe_data(BASE_URL, SETTLERS_PARAMS)
-if data:
-    results = data["lines"]
-    poe_df = pd.DataFrame(results)
-    poe_df.to_csv("data_temp/settlers_currency_data.csv", index=False)
-    results_reform = reformat_all_data(results)
-    print(type(results_reform))
-    print(results_reform[0])
-    db_insert_currency(results_reform)
+        results = data["lines"]
+        poe_df = pd.DataFrame(results)
+        poe_df.to_csv("data_temp/settlers_currency_data.csv", index=False)
+
+        reformatted = reformat_all_data(results)
+        db_insert_currency(reformatted)
+    except Exception as e:
+        print(f"Error in main: {e}")
