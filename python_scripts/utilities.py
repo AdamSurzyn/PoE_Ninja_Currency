@@ -9,13 +9,13 @@ def format_sample_time(time_str):
     return sample_time_hour
 
 def reformat_dic(currency_dic):
-    return {
-        "currency_type_name": currency_dic['currencyTypeName'],
-        "sample_time_utc": currency_dic["receive"]["sample_time_utc"],
-        "count": currency_dic["receive"]["count"],
-        "value": currency_dic["receive"]["value"],
-        "details_id": currency_dic["detailsId"]
-    }
+    return (
+        currency_dic['currencyTypeName'],
+        format_sample_time(currency_dic["receive"]["sample_time_utc"]),
+        currency_dic["receive"]["count"],
+        currency_dic["receive"]["value"],
+        currency_dic["detailsId"]
+    )
 
 def reformat_all_data(currency_items): 
     formatted_items = []
