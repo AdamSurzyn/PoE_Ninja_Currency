@@ -7,7 +7,6 @@ def get_poe_data(url, params):
     try:
         currency_res = requests.get(url, params)
         currency_res.raise_for_status()
-        setup_logger('poe_get.log')
         return currency_res.json()
     except requests.exceptions.RequestException as er:
         print(f"Error fetching data: {er}")
