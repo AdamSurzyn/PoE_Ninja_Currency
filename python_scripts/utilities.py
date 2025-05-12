@@ -1,6 +1,7 @@
 from datetime import datetime
 import re
 import json
+import pandas as pd
 
 def format_sample_time(time_str):
     sample_time_iso = re.sub(r"\.\d+Z", "", time_str)
@@ -23,3 +24,7 @@ def reformat_all_data(currency_items):
         formatted_item = reformat_dic(currency_item)
         formatted_items.append(formatted_item)
     return formatted_items
+
+def save_csv_results(data):
+    data_df = pd.DataFrame(data)
+    data_df.to_csv("data_temp/settlers_currency_data.csv", index=False, mode='w')
