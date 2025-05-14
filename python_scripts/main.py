@@ -1,8 +1,8 @@
 import logging
-from fetcher import get_poe_data
-from db_insert import db_insert_currency
+from python_scripts.fetcher import get_poe_data
+from python_scripts.db_insert import db_insert_currency
 from python_scripts.logger import setup_logger
-from utilities import reformat_all_data, save_csv_results
+from python_scripts.utilities import reformat_all_data, save_csv_results
 
 BASE_URL = 'https://poe.ninja/api/data/currencyoverview'
 SETTLERS_PARAMS = {
@@ -26,3 +26,4 @@ def main():
         print(f"Error in main: {e}")
 if __name__ == "__main__":
     main()
+    

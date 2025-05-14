@@ -1,7 +1,9 @@
 from airflow import DAG
-from airflow.operators.empty import EmptyOperator
 from datetime import datetime
-
+from airflow.operators.python import PythonOperator
+from python_scripts.main import main
+import sys
+print("PYTHONPATH:", sys.path)
 default_args = {
     'owner': 'airflow',
     'start_date': datetime(2025, 5, 13),
@@ -9,20 +11,16 @@ default_args = {
 }
 
 dag = DAG(
-    dag_id='poe_settlers_dag',
+    dag_id='poe_dag',
     default_args=default_args,
     description='dag that will download and save data regarding phrecia currencies',
-    schedule_interval=None
+    schedule_interval='@daily',
+    catchup=False
 )
-
-start_task = EmptyOperator(
-    task_id='start_task',
-    dag=dag,
+# For now it's all in one step because there is not much data.
+# Later when I will learn how I will divide  it into steps.
+update_data = PythonOperator(
+    task_id="get_settlers_currency_data",
+    python_callable=main,
+    dag=dag
 )
-
-end_task = EmptyOperator(
-    task_id='end_task',
-    dag=dag,
-)
-
-start_task >> end_task

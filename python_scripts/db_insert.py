@@ -1,6 +1,5 @@
 import psycopg2
 import psycopg2.extras
-from utilities import format_sample_time
 
 def db_insert_currency(currency_data):
 
