@@ -11,12 +11,11 @@ def db_insert_currency(currency_data):
         )
     cursor = connection.cursor()
     insert_query = """
-    INSERT INTO currency_rates (
-        currency_type_name, 
-        sample_time_utc, 
-        count, 
-        value_chaos, 
-        detailsId
+    INSERT INTO currency_rates_dim (
+        currency
+        full_name, 
+        type, 
+        source 
         )
       VALUES %s
       ON CONFLICT (currency_type_name, sample_time_utc)

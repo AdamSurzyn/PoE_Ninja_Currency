@@ -1,9 +1,15 @@
+import sys
+import os
+
+PROJECT_ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
+if PROJECT_ROOT not in sys.path:
+    sys.path.insert(0, PROJECT_ROOT)
+    
 from airflow import DAG
 from datetime import datetime
 from airflow.operators.python import PythonOperator
-from python_scripts.main import main
-import sys
-print("PYTHONPATH:", sys.path)
+from python_scripts.extract_load import get_data
+
 default_args = {
     'owner': 'airflow',
     'start_date': datetime(2025, 5, 13),
@@ -21,6 +27,6 @@ dag = DAG(
 # Later when I will learn how I will divide  it into steps.
 update_data = PythonOperator(
     task_id="get_settlers_currency_data",
-    python_callable=main,
+    python_callable=get_data,
     dag=dag
 )
