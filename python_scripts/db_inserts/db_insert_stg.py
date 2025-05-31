@@ -1,3 +1,4 @@
+import logging
 import psycopg2
 import psycopg2.extras
 
@@ -10,6 +11,7 @@ def db_insert_currency(currency_data):
         port="5432"
         )
     cursor = connection.cursor()
+    logging.INFO("Start dim insert.")
     insert_query = """
     INSERT INTO currency_rates_stg_raw (
         currency_type_name, 
@@ -17,7 +19,8 @@ def db_insert_currency(currency_data):
         count, 
         value_chaos, 
         detailsId,
-        source
+        source,
+        league
         )
       VALUES %s
       ON CONFLICT (currency_type_name, sample_time_utc)

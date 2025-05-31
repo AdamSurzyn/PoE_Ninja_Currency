@@ -1,7 +1,6 @@
 import psycopg2
-import psycopg2.extras
-
-def db_insert_currency(currency_data):
+import logging
+def db_insert_currency_dim():
 
     connection = psycopg2.connect(
         dbname="poe_currency",
@@ -10,23 +9,19 @@ def db_insert_currency(currency_data):
         port="5432"
         )
     cursor = connection.cursor()
+    logging.info("Start raw data insert.")
     insert_query = """
     INSERT INTO currency_rates_dim (
-        currency
-        full_name, 
-        type, 
-        source 
+        currency_type_name, 
+        source,
+        league 
         )
-      VALUES %s
-      ON CONFLICT (currency_type_name, sample_time_utc)
-      DO UPDATE SET
-        count = EXCLUDED.count,
-        value_chaos = EXCLUDED.value_chaos,
-        detailsId = EXCLUDED.detailsId;
+      SELECT DISTINCT currency_type_name, source, league
+      FROM currency_rates_stg_raw
+      ON CONFLICT (currency_type_name) DO NOTHING;
     """
-    psycopg2.extras.execute_values (
-        cursor, insert_query, currency_data
-    )
+
+    cursor.execute(insert_query)
     connection.commit()
     cursor.close()
     connection.close()
