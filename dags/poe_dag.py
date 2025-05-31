@@ -9,6 +9,7 @@ from airflow import DAG
 from datetime import datetime
 from airflow.operators.python import PythonOperator
 from python_scripts.extract_load import get_data
+from python_scripts.db_inserts.db_insert_dim import db_insert_currency_dim
 
 default_args = {
     'owner': 'airflow',
@@ -26,7 +27,15 @@ dag = DAG(
 # For now it's all in one step because there is not much data.
 # Later when I will learn how I will divide  it into steps.
 update_data = PythonOperator(
-    task_id="get_settlers_currency_data",
+    task_id="get_currency_data",
     python_callable=get_data,
     dag=dag
 )
+
+update_dim = PythonOperator(
+    task_id="update_currency_data",
+    python_callable=db_insert_currency_dim,
+    dag=dag
+)
+
+update_data >> update_dim
