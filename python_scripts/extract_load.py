@@ -11,6 +11,7 @@ SETTLERS_PARAMS = {
 }
 SOURCE = "PoE Ninja API" #Adding source here, will move it once I have more sources
 def get_data():
+    league = SETTLERS_PARAMS["league"]
     try:
         setup_logger()
         data = get_poe_data(BASE_URL, SETTLERS_PARAMS)
@@ -20,8 +21,7 @@ def get_data():
 
         results = data["lines"]
         save_csv_results(results)
-
-        reformatted = reformat_all_data(results, SOURCE)
+        reformatted = reformat_all_data(results, SOURCE, league)
         db_insert_currency(reformatted)
         print(results[0])
     except Exception as e:
