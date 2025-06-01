@@ -128,3 +128,6 @@ def db_insert_currency_historical():
 HISTORICAL_DATA = get_ids_dic()
 fetch_currency_history_pd(HISTORICAL_DATA, "data_temp/historical_settlers_currency_data.csv")
 db_insert_currency_historical()
+
+#TODO: ADD CONCURRENT REQUESTS
+#TODO: SIMPLIFY
