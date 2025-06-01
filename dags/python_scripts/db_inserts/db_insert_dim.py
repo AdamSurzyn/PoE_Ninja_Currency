@@ -1,7 +1,7 @@
 import psycopg2
 import logging
 def db_insert_currency_dim():
-
+  try:
     connection = psycopg2.connect(
         dbname="poe_currency",
         user="adam",
@@ -23,5 +23,9 @@ def db_insert_currency_dim():
 
     cursor.execute(insert_query)
     connection.commit()
+  except Exception as e:
+    logging.error(f"Error during dim insert: {e}")
+    raise
+  finally:
     cursor.close()
     connection.close()
