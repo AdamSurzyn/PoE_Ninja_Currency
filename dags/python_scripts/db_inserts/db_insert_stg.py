@@ -3,7 +3,6 @@ import psycopg2
 import psycopg2.extras
 
 def db_insert_currency(currency_data):
-
     connection = psycopg2.connect(
         dbname="poe_currency",
         user="adam",
@@ -11,7 +10,7 @@ def db_insert_currency(currency_data):
         port="5432"
         )
     cursor = connection.cursor()
-    logging.INFO("Start dim insert.")
+    logging.info("Start dim insert.")
     insert_query = """
     INSERT INTO currency_rates_stg_raw (
         currency_type_name, 
