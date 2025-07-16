@@ -18,7 +18,7 @@ def db_insert_currency_dim():
         )
       SELECT DISTINCT currency_type_name, source, league
       FROM currency_rates_stg_raw
-      ON CONFLICT (currency_type_name) DO NOTHING;
+      ON CONFLICT (currency_type_name, source, league) DO NOTHING;
     """
 
     cursor.execute(insert_query)
