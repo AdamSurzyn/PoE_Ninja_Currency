@@ -10,8 +10,9 @@ python-dotenv==1.1.0
 pytz==2025.2
 requests==2.32.3
 six==1.17.0
-SQLAlchemy==2.0.40
+SQLAlchemy==1.4.46
 typing_extensions==4.13.2
 tzdata==2025.2
 urllib3==2.4.0
 apache-airflow==2.9.0
+apache-airflow-providers-postgres==2.4.0

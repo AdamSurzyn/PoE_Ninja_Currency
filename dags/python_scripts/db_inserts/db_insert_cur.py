@@ -1,35 +1,29 @@
-import psycopg2
+from sqlalchemy import create_engine, Table, MetaData, select
+from sqlalchemy.dialects.postgresql import insert
+from airflow.hooks.base import BaseHook
 import logging
+
+
+
+
 def db_insert_currency_data():
     try:
-        connection = psycopg2.connect(
-            dbname="poe_currency",
-            user="adam",
-            host="localhost",
-            port="5432"
-            )
-        cursor = connection.cursor()
-        logging.info("Start currency insert.")
-        insert_query = """
-        INSERT INTO currency_rates (
-            currency_type_name, 
-            sample_time_utc,
-            count,
-            value_chaos
-            )
-        SELECT currency_type_name, sample_time_utc, count, value_chaos
-        FROM currency_rates_stg_raw
-                ON CONFLICT (currency_type_name, sample_time_utc)
-        DO UPDATE SET
-            count = EXCLUDED.count,
-            value_chaos = EXCLUDED.value_chaos;
-        """
+        airConn = BaseHook.get_connection("poe_postgres_conn")
+        airUri = airConn.get_uri()
+        airUri = airUri.replace("postgres://", "postgresql+psycopg2://", 1) #JEEEEEEEEEEESUS, THATS INSANE
+        engine = create_engine(airUri)
+        metaData = MetaData()
+        currencyTable = Table("currency_rates", metaData, autoload_with=engine)
+        stagingTable = Table("currency_rates_stg_raw", metaData, autoload_with=engine)
 
-        cursor.execute(insert_query)
-        connection.commit()
+        stg_select = select(stagingTable.c.currency_type_name, stagingTable.c.sample_time_utc, stagingTable.c.count, stagingTable.c.value_chaos)
+
+        stmt = insert(currencyTable).from_select([currencyTable.c.currency_type_name, currencyTable.c.sample_time_utc, currencyTable.c.count, currencyTable.c.value_chaos], stg_select)
+
+        stmt = stmt.on_conflict_do_update(index_elements=[currencyTable.c.currency_type_name, currencyTable.c.sample_time_utc], set_={"count": stmt.excluded.count, "value_chaos": stmt.excluded.value_chaos})
+
+        with engine.begin() as conn: conn.execute(stmt)
+
     except Exception as e:
         logging.error(f"Error during currency insert: {e}")
         raise
-    finally:
-        cursor.close()
-        connection.close()

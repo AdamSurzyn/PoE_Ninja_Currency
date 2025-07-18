@@ -22,8 +22,8 @@ def get_data():
         results = data["lines"]
         #save_csv_results(results)
         reformatted = reformat_all_data(results, SOURCE, league)
+        print(reformatted)
         db_insert_currency(reformatted)
-        print(results[0])
     except Exception as e:
         print(f"Error in main: {e}")
     
