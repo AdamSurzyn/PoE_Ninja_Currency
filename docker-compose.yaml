@@ -2,6 +2,12 @@ version: '3.8'
 
 services:
   postgres:
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U $DB_USER"]
+      interval: 30s
+      timeout: 10s
+      retrues: 3
+      start_period: 30s
     restart: always
     ports:
     - "5432:5432"
@@ -20,6 +26,12 @@ services:
     env_file:
     - .env
     image: apache/airflow:2.9.0
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f http://localhost:8080/health || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+      start_period: 15s
     container_name: poe_airflow
     restart: always
     depends_on:
@@ -38,6 +50,7 @@ services:
       bash -c "airflow db upgrade && airflow users create --username ${AIRFLOW_ADMIN_USERNAME} --firstname Admin --lastname User --role Admin --password ${AIRFLOW_ADMIN_PASSWORD} --email ${AIRFLOW_ADMIN_EMAIL} && airflow webserver"
 
   scheduler:
+    # Not sure how to check vitals of the scheduler :/
     env_file:
       - .env
     image: apache/airflow:2.9.0
