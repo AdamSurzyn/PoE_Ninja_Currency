@@ -1,13 +1,11 @@
-from sqlalchemy import create_engine, Table, MetaData, select, distinct
+from sqlalchemy import Table, MetaData, select, distinct
 from sqlalchemy.dialects.postgresql import insert
-from airflow.hooks.base import BaseHook
+from python_scripts.utilities import get_sqlalchemy_engine
 import logging
+
 def db_insert_currency_dim():
   try:
-    airConn = BaseHook.get_connection("poe_postgres_conn")
-    airUri = airConn.get_uri()
-    airUri = airUri.replace("postgres://", "postgresql+psycopg2://", 1)
-    engine = create_engine(airUri)
+    engine = get_sqlalchemy_engine()
     metaData = MetaData()
     currencyDimTable = Table("currency_rates_dim", metaData, autoload_with=engine)
     stagingTable = Table("currency_rates_stg_raw", metaData, autoload_with=engine)

@@ -1,6 +1,8 @@
 from datetime import datetime
 import re
 import pandas as pd
+import os
+from sqlalchemy import create_engine
 
 def format_sample_time(time_str):
     sample_time_iso = re.sub(r"\.\d+Z", "", time_str)
@@ -25,3 +27,13 @@ def reformat_all_data(currency_items, source, league):
 def save_csv_results(data):
     data_df = pd.DataFrame(data)
     data_df.to_csv("data_temp/settlers_currency_data.csv", index=False, mode='w')
+
+def get_sqlalchemy_engine():
+    user = os.getenv("DB_USER")
+    password = os.getenv("DB_PASSWORD")
+    host = os.getenv("DB_HOST")
+    port = os.getenv("DB_PORT", 5432)
+    db = os.getenv("DB_NAME")
+
+    uri = f"postgresql+psycopg2://{user}:{password}@{host}:{port}/{db}"
+    return create_engine(uri)

@@ -18,7 +18,6 @@ def get_data():
         if not data:
             logging.error("Data not received")
             return
-
         results = data["lines"]
         #save_csv_results(results)
         reformatted = reformat_all_data(results, SOURCE, league)
@@ -27,4 +26,5 @@ def get_data():
     except Exception as e:
         print(f"Error in main: {e}")
     
-get_data()
+if __name__ == "__main__":
+    get_data()
