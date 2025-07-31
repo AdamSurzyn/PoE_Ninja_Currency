@@ -5,3 +5,4 @@ __pycache__/
 logs/
 data_temp/
 .env
+.venv/
