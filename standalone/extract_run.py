@@ -21,6 +21,7 @@ def run():
             return
         results = data["lines"]
         reformatted = reformat_all_data(results, SOURCE, league)
+        print(reformatted[0])
         db_insert_currency(reformatted)
     except Exception as e:
         print(f"ERROR: {e}")
