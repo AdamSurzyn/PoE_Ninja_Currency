@@ -5,8 +5,9 @@ import os
 from sqlalchemy import create_engine
 
 def format_sample_time(time_str):
-    sample_time_iso = re.sub(r"\.\d+Z", "", time_str)
-    sample_time_utc = datetime.fromisoformat(sample_time_iso)
+    time_str = re.sub(r"Z$", "", time_str)
+    time_str = re.sub(r"\.\d+", "", time_str)
+    sample_time_utc = datetime.fromisoformat(time_str)
     return sample_time_utc.replace(minute=0, second=0, microsecond=0)
 
 def reformat_dic(currency_dic, source, league):
