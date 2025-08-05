@@ -6,3 +6,4 @@ logs/
 data_temp/
 .env
 .venv/
+.vscode
