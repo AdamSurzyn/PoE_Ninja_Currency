@@ -24,7 +24,7 @@ def fetch_currency_history_pd(data_dic, output_path="currency_history.csv", days
 
             df = (
                 pd.DataFrame(entries)
-                .loc[lambda d: d["daysAgo"] <= days_limit]
+                .loc[lambda d: d["daysAgo"] <= days_limit] #Filters out rows before days limit - probably should've done it in sql.
                 .rename(columns={"value": "value_chaos"})
             )
 
