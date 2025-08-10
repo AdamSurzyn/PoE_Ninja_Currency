@@ -22,11 +22,11 @@ def test_reformat_all_data():
 
     item = result[0]
 
-    assert item["currency_type_name"] == "Chaos Orb"
+    assert item["currency_type_name"] == "Exalted Orb"
     assert item["sample_time_utc"] == datetime.datetime(2025, 8, 4, 16, 0)
-    assert item["count"] == 100
-    assert item["value_chaos"] == 1.0
-    assert item["detailsid"] == "chaos"
+    assert item["count"] == 50
+    assert item["value_chaos"] == 150.5
+    assert item["detailsid"] == "exalted"
     assert item["source"] == source
     assert item["league"] == league
 

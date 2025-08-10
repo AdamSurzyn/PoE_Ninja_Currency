@@ -5,7 +5,7 @@ import os
 from sqlalchemy import create_engine
 
 def format_sample_time(time_str):
-    sample_time_iso = re.sub(r"\.\d+Z", "", time_str)
+    sample_time_iso = re.sub(r"(\.\d+)?Z", "", time_str)
     sample_time_utc = datetime.fromisoformat(sample_time_iso)
     return sample_time_utc.replace(minute=0, second=0, microsecond=0)
 
