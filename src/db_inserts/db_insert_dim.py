@@ -1,6 +1,6 @@
 from sqlalchemy import Table, MetaData, select, distinct
 from sqlalchemy.dialects.postgresql import insert
-from python_scripts.utilities import get_sqlalchemy_engine
+from src.utilities import get_sqlalchemy_engine
 import logging
 
 def db_insert_currency_dim():

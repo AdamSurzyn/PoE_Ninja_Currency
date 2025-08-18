@@ -1,6 +1,6 @@
 from sqlalchemy import Table, MetaData, select
 from sqlalchemy.dialects.postgresql import insert
-from python_scripts.utilities import get_sqlalchemy_engine
+from src.utilities import get_sqlalchemy_engine
 import logging
 
 
