@@ -1,10 +1,10 @@
-from dags.python_scripts.fetcher import get_poe_data
-from dags.python_scripts.db_inserts.db_insert_stg import db_insert_currency
-from dags.python_scripts.db_inserts.db_insert_dim import db_insert_currency_dim
-from dags.python_scripts.db_inserts.db_insert_cur import db_insert_currency_data 
-from dags.python_scripts.logger import setup_logger
-from dags.python_scripts.utilities import reformat_all_data, get_sqlalchemy_engine
-from dags.python_scripts.lock import acquire_job_lock, release_job_lock
+from src.fetcher import get_poe_data
+from src.db_inserts.db_insert_stg import db_insert_currency
+from src.db_inserts.db_insert_dim import db_insert_currency_dim
+from src.db_inserts.db_insert_cur import db_insert_currency_data 
+from src.logger import setup_logger
+from src.utilities import reformat_all_data, get_sqlalchemy_engine
+from src.lock import acquire_job_lock, release_job_lock
 from dotenv import load_dotenv
 
 BASE_URL = 'https://poe.ninja/api/data/currencyoverview'
