@@ -1,0 +1,15 @@
+.git
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+*.sqlite
+
+.venv/
+venv/
+env/
+
+tests/
+logs/
+
+dev-log.md
