@@ -1,6 +1,5 @@
 from src.fetcher import get_poe_data
 from src.db_inserts.db_insert_stg import db_insert_currency
-from src.logger import setup_logger
 from src.utilities import reformat_all_data, get_sqlalchemy_engine
 from dotenv import load_dotenv
 
@@ -15,8 +14,14 @@ def run():
     load_dotenv()
     league = MERCANERIES_PARAMS["league"]
     data = get_poe_data(BASE_URL, MERCANERIES_PARAMS)
+
+    if not data or "lines" not in data or not data["lines"]:
+        print("No data!")
+        return
+    
     results = data["lines"]
     reformatted = reformat_all_data(results, SOURCE, league)
+
     print(reformatted[0])
     db_insert_currency(reformatted, "currency_rates_stg_raw")
     return 1
