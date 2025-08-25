@@ -3,6 +3,7 @@ import re
 import pandas as pd
 import os
 from sqlalchemy import create_engine
+from google.cloud import bigquery
 
 def format_sample_time(time_str):
     time_str = re.sub(r"Z$", "", time_str)
@@ -38,3 +39,6 @@ def get_sqlalchemy_engine():
 
     uri = f"postgresql+psycopg2://{user}:{password}@{host}:{port}/{db}"
     return create_engine(uri)
+
+def _schema_to_bq(schema_tuples):
+    return [bigquery.SchemaField(n, t, mode=m) for (n, t, m) in schema_tuples]
