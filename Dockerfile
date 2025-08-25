@@ -1,8 +1,8 @@
 FROM python:3.11-slim
 
 ENV PYTHONDONTWRITEBYTECODE=1 \ 
-    PYTHONBUFFERED=1 
-
+    PYTHONBUFFERED=1 \ 
+    PYTHONPATH=/app
 RUN useradd -m appuser
 
 WORKDIR /app
@@ -14,4 +14,4 @@ COPY . .
 
 USER appuser
 
-CMD ["python", "standalone/extract_run.py"]
+CMD ["python", "-m", "standalone.extract_run"]

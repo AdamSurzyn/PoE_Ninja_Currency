@@ -1,9 +1,8 @@
-from configs.schemas import BQ_TABLE_CONFIG
+from src.configs.schemas import BQ_TABLE_CONFIG
 from google.cloud import bigquery
 from google.api_core.exceptions import NotFound
 from google.oauth2 import service_account
 from utilities import _schema_to_bq
-from dotenv import load_dotenv
 import logging
 import os
 
@@ -11,7 +10,7 @@ import os
 def db_insert_currency(currency_data,
                        table_name):
     try:
-        
+
         if not currency_data:
             logging.info("staging: nothing to insert"); 
             return  
@@ -27,6 +26,8 @@ def db_insert_currency(currency_data,
 
         client = bigquery.Client(project=project_id)
         table_ref = bigquery.DatasetReference(project_id, dataset_id).table(table_name)
+
+        logging.info(f"BQ target: project={client.project} dataset={dataset_id} table={table_name} loc={client.location}")
 
         try:
             client.get_table(table_ref)

@@ -1,6 +1,6 @@
 from src.fetcher import get_poe_data
-from src.db_inserts.db_insert_stg import db_insert_currency
-from src.utilities import reformat_all_data, get_sqlalchemy_engine
+from src.db_inserts.bq_insert_stg import db_insert_currency
+from src.utilities import reformat_all_data
 from dotenv import load_dotenv
 
 BASE_URL = 'https://poe.ninja/api/data/currencyoverview'
