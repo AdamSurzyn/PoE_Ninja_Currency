@@ -1,8 +1,8 @@
 from src.configs.schemas import BQ_TABLE_CONFIG
+from src.utilities import _schema_to_bq, get_env_var
 from google.cloud import bigquery
 from google.api_core.exceptions import NotFound
 from google.oauth2 import service_account
-from src.utilities import _schema_to_bq
 import pandas as pd
 import logging
 import os
@@ -18,8 +18,8 @@ def db_insert_currency(currency_data,
             raise KeyError(f"Unknown table in BQ_TABLE_CONFIG: {table_name}")
         
         bq_cfg_stg = BQ_TABLE_CONFIG[table_name]
-        project_id = os.getenv("GCP_PROJECT")
-        dataset_id = os.getenv("BQ_DATASET")
+        project_id = get_env_var("GCP_PROJECT")
+        dataset_id = get_env_var("BQ_DATASET")
         schema_stg = _schema_to_bq(bq_cfg_stg["schema"])
     
     
