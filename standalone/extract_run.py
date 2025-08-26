@@ -23,7 +23,7 @@ def run():
     reformatted = reformat_all_data(results, SOURCE, league)
 
     print(reformatted[0])
-    db_insert_currency(reformatted, "currency_rates_stg_raw")
+    db_insert_currency(reformatted, "currency_rates_stg")
     return 1
 
 if __name__ == "__main__":

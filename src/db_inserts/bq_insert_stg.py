@@ -2,7 +2,8 @@ from src.configs.schemas import BQ_TABLE_CONFIG
 from google.cloud import bigquery
 from google.api_core.exceptions import NotFound
 from google.oauth2 import service_account
-from utilities import _schema_to_bq
+from src.utilities import _schema_to_bq
+import pandas as pd
 import logging
 import os
 
@@ -10,7 +11,6 @@ import os
 def db_insert_currency(currency_data,
                        table_name):
     try:
-
         if not currency_data:
             logging.info("staging: nothing to insert"); 
             return  
@@ -34,13 +34,15 @@ def db_insert_currency(currency_data,
         except NotFound:
             raise RuntimeError(f"Table {table_ref.path} does not exist. (We don't create tables here.)")
 
+        poe_df = pd.DataFrame(currency_data)
+        poe_df["sample_time_utc"] = pd.to_datetime(poe_df["sample_time_utc"], utc=True)
 
         job_config = bigquery.LoadJobConfig(
             schema=schema_stg,
             write_disposition=bigquery.WriteDisposition.WRITE_APPEND,
             ignore_unknown_values=True
         )
-        load_job = client.load_table_from_json(currency_data, table_ref, job_config=job_config)
+        load_job = client.load_table_from_dataframe(poe_df, table_ref, job_config=job_config)
         load_job.result()
         logging.info(f"Loaded {load_job.output_rows} rows into {table_ref.path}")
 
