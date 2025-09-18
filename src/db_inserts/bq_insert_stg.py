@@ -22,8 +22,6 @@ def db_insert_currency(currency_data,
         dataset_id = get_env_var("BQ_DATASET")
         schema_stg = _schema_to_bq(bq_cfg_stg["schema"])
     
-    
-
         client = bigquery.Client(project=project_id)
         table_ref = bigquery.DatasetReference(project_id, dataset_id).table(table_name)
 

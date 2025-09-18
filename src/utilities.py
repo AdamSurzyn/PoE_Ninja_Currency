@@ -1,6 +1,9 @@
 from datetime import datetime
-import re
 from google.cloud import bigquery
+from pathlib import Path
+from string import Template
+import re
+import os
 
 def format_sample_time(time_str):
     time_str = re.sub(r"Z$", "", time_str)
@@ -25,3 +28,16 @@ def reformat_all_data(currency_items, source, league):
 
 def _schema_to_bq(schema_tuples):
     return [bigquery.SchemaField(n, t, mode=m) for (n, t, m) in schema_tuples]
+
+def get_env_var(name):
+    value = os.getenv(name)
+    if not value:
+        raise EnvironmentError(f"Missing required environment variable: {name}")
+    return value
+
+def _render_sql_with_args(path, project, dataset):
+    sql_path = Path(path)
+    if not sql_path.exists:
+        raise FileNotFoundError(f"SQL file not found: {sql_path}")
+    txt = sql_path.read_text(encoding="utf-8")
+    return Template(txt).substitute(PROJECT=project, DATASET=dataset)
