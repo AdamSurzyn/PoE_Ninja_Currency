@@ -3,7 +3,6 @@ from google.cloud import bigquery
 from google.cloud.bigquery import QueryJobConfig, ScalarQueryParameter
 from src.utilities import get_env_var, _render_sql_with_args
 from datetime import datetime, timezone, timedelta
-import os
 
 def run_poe_dim_merge(path, since_ts=None):
 
@@ -18,7 +17,7 @@ def run_poe_dim_merge(path, since_ts=None):
         job_config = QueryJobConfig(
             use_legacy_sql=False,
             query_parameters=[
-                ScalarQueryParameter("since", "TIMESTAMP", since_ts)
+                ScalarQueryParameter("since", "TIMESTAMP", since_ts) #Scalar - so we just pass one value, very smart 
             ],
         )
 
