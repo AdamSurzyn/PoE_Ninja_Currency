@@ -1,18 +1,22 @@
 MERGE `${PROJECT}.${DATASET}.currency_rates` as T USING (
-    SELECT DISTINCT S.league,
+    SELECT S.league,
         S.sample_time_utc,
-        S.count,
-        S.value_chaos,
+        MAX(S.count) as count,
+        AVG(S.value_chaos) as value_chaos,
         S.currency_type_name
     FROM `${PROJECT}.${DATASET}.currency_rates_stg` S
     WHERE S.sample_time_utc >= @since
+    GROUP BY league,
+        sample_time_utc,
+        currency_type_name
 ) as S ON T.currency_type_name = S.currency_type_name
 AND T.sample_time_utc = S.sample_time_utc
 AND T.league = S.league
 WHEN MATCHED THEN
 UPDATE
 SET count = S.count,
-    value_chaos = S.value_chaos
+    value_chaos = S.value_chaos,
+    inserted_at = CURRENT_TIMESTAMP()
     WHEN NOT MATCHED THEN
 INSERT (
         league,
