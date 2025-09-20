@@ -17,7 +17,9 @@ SOURCE = "PoE Ninja API"
 def run():
     setup_logger()
     load_dotenv()
+
     league = MERCENERIES_PARAMS["league"]
+    
     data = get_poe_data(BASE_URL, MERCENERIES_PARAMS)
 
     if not data or "lines" not in data or not data["lines"]:
