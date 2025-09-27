@@ -16,7 +16,7 @@ WHEN MATCHED THEN
 UPDATE
 SET count = S.count,
     value_chaos = S.value_chaos,
-    inserted_at = CURRENT_TIMESTAMP()
+    inserted_at = TIMESTAMP_TRUNC(CURRENT_TIMESTAMP(), HOUR)
     WHEN NOT MATCHED THEN
 INSERT (
         league,
@@ -32,5 +32,5 @@ VALUES (
         S.count,
         S.value_chaos,
         S.currency_type_name,
-        CURRENT_TIMESTAMP()
+        TIMESTAMP_TRUNC(CURRENT_TIMESTAMP(), HOUR)
     )

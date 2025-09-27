@@ -4,7 +4,7 @@ MERGE `${PROJECT}.${DATASET}.currency_leagues` AS T USING (
 ) AS S ON T.league = S.league
 WHEN MATCHED THEN
 UPDATE
-SET last_seen = CURRENT_TIMESTAMP()
+SET last_seen = TIMESTAMP_TRUNC(CURRENT_TIMESTAMP(), HOUR)
     WHEN NOT MATCHED THEN
 INSERT (
         league,
@@ -13,6 +13,6 @@ INSERT (
     )
 VALUES(
         league,
-        CURRENT_TIMESTAMP(),
-        CURRENT_TIMESTAMP()
+        TIMESTAMP_TRUNC(CURRENT_TIMESTAMP(), HOUR),
+        TIMESTAMP_TRUNC(CURRENT_TIMESTAMP(), HOUR)
     );

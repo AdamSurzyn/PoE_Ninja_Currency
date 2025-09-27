@@ -1,5 +1,6 @@
 from dotenv import load_dotenv
 
+from src.db_inserts.bq_insert_currencies import run_poe_currencies_merge
 from src.fetcher import get_poe_data
 from src.db_inserts.bq_insert_stg import db_insert_currency
 from src.db_inserts.bq_insert_dim import run_poe_dim_merge
@@ -35,6 +36,7 @@ def run():
     run_poe_dim_merge("src/sql/merge_currency_dim.sql")
     run_poe_fact_merge("src/sql/merge_currency_fact.sql")
     run_poe_league_merge("src/sql/merge_currency_league.sql")
+    run_poe_currencies_merge("src/sql/merge_currency_currencies.sql")
     return 1
 
 if __name__ == "__main__":

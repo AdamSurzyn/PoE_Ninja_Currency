@@ -10,7 +10,7 @@ AND T.league = S.league
 AND T.currency_type_name = S.currency_type_name
 WHEN MATCHED THEN
 UPDATE
-SET last_seen = CURRENT_TIMESTAMP()
+SET last_seen = TIMESTAMP_TRUNC(CURRENT_TIMESTAMP(), HOUR)
     WHEN NOT MATCHED THEN
 INSERT (
         detailsid,
@@ -25,6 +25,6 @@ VALUES (
         S.source,
         S.league,
         S.currency_type_name,
-        CURRENT_TIMESTAMP(),
-        CURRENT_TIMESTAMP()
+        TIMESTAMP_TRUNC(CURRENT_TIMESTAMP(), HOUR),
+        TIMESTAMP_TRUNC(CURRENT_TIMESTAMP(), HOUR)
     )
