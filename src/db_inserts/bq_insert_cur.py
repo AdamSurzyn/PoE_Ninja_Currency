@@ -3,7 +3,6 @@ from google.cloud import bigquery
 from google.cloud.bigquery import QueryJobConfig, ScalarQueryParameter
 from src.utilities import get_env_var, _render_sql_with_args
 from datetime import datetime, timezone, timedelta
-import os
 
 def run_poe_fact_merge(path, since_ts=None):
 
