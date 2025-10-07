@@ -2,11 +2,8 @@ from src.configs.schemas import BQ_TABLE_CONFIG
 from src.utilities import _schema_to_bq, get_env_var
 from google.cloud import bigquery
 from google.api_core.exceptions import NotFound
-from google.oauth2 import service_account
 import pandas as pd
 import logging
-import os
-
 
 def db_insert_currency(currency_data,
                        table_name):
