@@ -27,7 +27,7 @@ def run_poe_merge(path, since_ts=None):
         job.result()
         logging.info("facts MERGE completed.")
     except Exception as e:
-        logging.error(f"Error during raw data insert: {e}")
+        logging.error(f"Error during merge insert: {e}")
         raise
 
     
