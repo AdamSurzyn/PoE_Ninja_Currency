@@ -16,7 +16,6 @@ def run():
     type = get_env_var("TYPE")
     source = get_env_var("SOURCE")
     params = {"league": league, "type": type}
-    print(source)
     data = get_poe_data(BASE_URL, params)
 
     if not data or "lines" not in data or not data["lines"]:
@@ -33,6 +32,7 @@ def run():
     run_poe_merge("src/sql/merge_currency_league.sql")
     run_poe_merge("src/sql/merge_currency_currencies.sql")
     run_poe_merge("src/sql/merge_currency_sources.sql")
+    print("Poe Currencies have been succesfuly updated!")
     return 1
 
 if __name__ == "__main__":
