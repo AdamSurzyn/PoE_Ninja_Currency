@@ -37,7 +37,7 @@ def get_env_var(name):
 
 def _render_sql_with_args(path, project, dataset):
     sql_path = Path(path)
-    if not sql_path.exists:
+    if not sql_path.exists():
         raise FileNotFoundError(f"SQL file not found: {sql_path}")
     txt = sql_path.read_text(encoding="utf-8")
     return Template(txt).substitute(PROJECT=project, DATASET=dataset)
