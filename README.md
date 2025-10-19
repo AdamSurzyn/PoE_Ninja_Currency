@@ -1,169 +1,100 @@
-# Path of Exile Currency Tracker
+PoE Ninja Currency Data Pipeline
 
-A data engineering project to collect, store, and analyze Path of Exile currency data over the course of a league. This project leverages Apache Airflow for orchestration, PostgreSQL for storage, and Docker Compose for containerization. Data is sourced from [poe.ninja](https://poe.ninja).
+A lightweight data pipeline for extracting Path of Exile currency data from the PoE Ninja API and loading it into BigQuery for analysis.
 
----
+Overview
 
-## Features
+This project fetches currency exchange data every hour, stores it in a staging table, and merges it into fact and dimension tables using SQL MERGE statements.
 
-- Scheduled DAGs using Airflow to fetch currency data
-- Data persistence using PostgreSQL
-- Containerized environment using Docker Compose
-- Healthchecks to monitor the state of critical services
-- Environment variables for secrets and configuration
-- Ready for local development and experimentation
+The pipeline runs locally or on Google Cloud Run and is designed to be simple, modular, and cost-efficient.
 
----
+Architecture
+PoE Ninja API → Cloud Run (Python App) → BigQuery
 
-## Technologies
+Tables
+Layer Table Description
+Staging currency_rates_stg Raw hourly currency data
+Dimension currency_rates_dim Currency metadata and tracking (first_seen, last_seen)
+Fact currency_rates Hourly prices and counts per currency and league
+Tech Stack
 
-- Python 3.11
-- Apache Airflow 2.9.0
-- PostgreSQL 13
-- Docker / Docker Compose
-- Bash
-- REST APIs
+Python 3.11
 
----
+BigQuery
 
-## Prerequisites
+Google Cloud Run
 
-Make sure the following are installed:
+Docker
 
-- [Docker](https://www.docker.com/)
-- [Docker Compose](https://docs.docker.com/compose/install/)
-- [Git](https://git-scm.com/)
-- (Optional) [DBeaver](https://dbeaver.io/) or another SQL client
+dotenv for environment configuration
 
----
+Local Setup
 
-## Getting Started
+1. Clone the repository
+   git clone https://github.com/<your-username>/PoE_Ninja_Currency.git
+   cd PoE_Ninja_Currency
 
-### 1. Clone the Repository
+2. Set environment variables
 
-```bash
-git clone https://github.com/YOUR_USERNAME/PoE_Ninja_Currency.git
-cd PoE_Ninja_Currency
-```
+Create a .env file:
 
-### 2. Create the `.env` File
+GCP_PROJECT=poeninjacurrencydata
+BQ_DATASET=poe
+BQ_LOCATION=europe-central2
 
-```bash
-cp .env.example .env
-```
+3. Install dependencies
+   python -m venv .venv
+   source .venv/bin/activate
+   pip install -r requirements/requirements.txt
 
-Generate a Fernet key:
+4. Run the pipeline locally
+   python -m standalone.extract_run
 
-```bash
-python -c "from cryptography.fernet import Fernet; print(Fernet.generate_key().decode())"
-```
+You can also trigger your merge steps manually:
 
-Paste it into your `.env` file under `FERNET_KEY`.
+python -m src.db_inserts.run_dim_merge
+python -m src.db_inserts.run_fact_merge
 
-### 3. Start the Containers
+Deployment (Cloud Run)
 
-```bash
-docker compose up -d
-```
+Build and deploy your container:
 
-This launches:
+gcloud builds submit --tag gcr.io/$GCP_PROJECT/poe-ninja-currency
+gcloud run deploy poe-ninja \
+  --image gcr.io/$GCP_PROJECT/poe-ninja-currency \
+ --region europe-central2 \
+ --set-env-vars GCP_PROJECT=$GCP_PROJECT,BQ_DATASET=$BQ_DATASET,BQ_LOCATION=$BQ_LOCATION \
+ --no-allow-unauthenticated
 
-- PostgreSQL (`poe_postgres`)
-- Airflow Webserver (`poe_airflow`)
-- Airflow Scheduler (`poe_scheduler`)
+Example Query
+SELECT
+currency_type_name,
+AVG(value_chaos) AS avg_price,
+league
+FROM `poe.currency_rates`
+WHERE sample_time_utc > TIMESTAMP_SUB(CURRENT_TIMESTAMP(), INTERVAL 7 DAY)
+GROUP BY currency_type_name, league
+ORDER BY avg_price DESC;
 
-### 4. Access the Airflow UI
+Project Structure
+.
+├── src/
+│ ├── configs/
+│ ├── db_inserts/
+│ ├── fetcher.py
+│ ├── utilities.py
+│ └── ...
+├── standalone/
+│ └── extract_run.py
+├── requirements/
+│ └── requirements.txt
+├── Dockerfile
+└── README.md
 
-Navigate to: [http://localhost:8080](http://localhost:8080)  
-Use the login credentials from your `.env` file.
+Notes
 
----
+BigQuery tables are partitioned and clustered for cost efficiency.
 
-## Environment Variables
+The merge process is idempotent: it updates existing rows and inserts new ones.
 
-Create your `.env` file using the template below:
-
-```env
-DB_USER=airflow
-DB_PASSWORD=airflow
-DB_NAME=airflow
-
-AIRFLOW_ADMIN_USERNAME=admin
-AIRFLOW_ADMIN_PASSWORD=supersecret
-AIRFLOW_ADMIN_EMAIL=admin@example.com
-
-FERNET_KEY=your_32_byte_base64_fernet_key
-```
-
-**Do not commit `.env` to version control.** Use `.env.example` instead.
-
----
-
-## DAGs
-
-- Located in the `./dags/` directory
-- Logs saved in `./logs/`
-- Trigger or monitor DAGs through the Airflow UI
-
----
-
-## Database Persistence
-
-PostgreSQL uses a named volume:
-
-```yaml
-volumes:
-  - postgres-db-volume:/var/lib/postgresql/data
-```
-
-To reset everything:
-
-```bash
-docker compose down -v
-```
-
-To inspect volumes:
-
-```bash
-docker volume ls
-```
-
----
-
-## Healthchecks
-
-Containers uses a healthcheck:
-
-- **PostgreSQL**: `pg_isready -U $DB_USER`
-- **Airflow Webserver**: `curl -f http://localhost:8080/health`
-
-Check status using:
-
-```bash
-docker ps
-```
-
-Look for container status: `healthy` / `unhealthy`.
-
----
-
-## Troubleshooting
-
-### Database won't start
-
-- Verify `.env` values
-- View logs: `docker logs poe_postgres`
-
-### Scheduler not executing DAGs
-
-- Ensure `poe_scheduler` is running
-- View logs: `docker logs poe_scheduler`
-
-### Environment changes not reflected
-
-Restart containers:
-
-```bash
-docker compose down
-docker compose up -d
-```
+Designed for minimal operational overhead (< $1/month to run).
