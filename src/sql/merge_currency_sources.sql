@@ -1,4 +1,4 @@
-MERGE `${PROJECT}.${DATASET}.currency_sources` AS T USING (
+MERGE `${PROJECT}.${DATASET}.currency_sources_dim` AS T USING (
     SELECT DISTINCT source
     FROM `${PROJECT}.${DATASET}.currency_rates_stg`
 ) AS S ON T.source = S.source

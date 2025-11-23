@@ -6,7 +6,7 @@ from src.db_inserts.bq_insert_stg import db_insert_currency
 from src.utilities import reformat_all_data, get_env_var
 from src.logger import setup_logger
 
-BASE_URL = 'https://poe.ninja/api/data/currencyoverview'
+BASE_URL = 'https://poe.ninja/poe1/api/economy/stash/current/currency/overview?'
 
 def run():
     setup_logger()
