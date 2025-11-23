@@ -14,26 +14,27 @@ from src.utilities import format_sample_time
 #get_currency_id
 
 def getHistoricalData ():
-    BASE_URL = 'https://poe.ninja/api/data/currencyoverview'
+
+    BASE_URL = 'https://poe.ninja/poe1/api/economy/stash/current/currency/overview?'
     source = "Historical"
     league = "Mercenaries"
     params = {
         "league": league,
-        "type": "Currencies"
+        "type": "Currency"
     }
-    HISTORICAL_BASE_URL = "https://poe.ninja/api/data/currencyhistory"
+    HISTORICAL_BASE_URL = "https://poe.ninja/poe1/api/economy/stash/current/currency/history?"
     data_with_ids = get_poe_data(BASE_URL, params)["lines"]
     historical_items = []
     for item in data_with_ids:
         historical_params = {
             **params,
-            "currencyId": item["receive"]["get_currency_id"]
+            "id": item["receive"]["get_currency_id"]
         }
         historical_items_data =get_poe_data(
             HISTORICAL_BASE_URL, 
             historical_params
         )
-
+    
         #Decide on the date from:to !!!
 
         for historical_item in historical_items_data["payCurrencyGraphData"]:
@@ -48,5 +49,6 @@ def getHistoricalData ():
             }
 
         
-
+if __name__ == "__main__":
+    getHistoricalData()
 
