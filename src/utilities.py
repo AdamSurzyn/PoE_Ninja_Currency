@@ -1,4 +1,4 @@
-from datetime import datetime
+from datetime import datetime, timedelta
 from google.cloud import bigquery
 from pathlib import Path
 from string import Template
@@ -12,7 +12,7 @@ def format_sample_time(time_str):
     return sample_time_utc.replace(minute=0, second=0, microsecond=0)
 
 def deduce_days(timeDateTime, days):
-    return timeDateTime - datetime.timedelta(days=days)
+    return timeDateTime - timedelta(days=days)
 
 def reformat_dic(currency_dic, source, league):
     return {
