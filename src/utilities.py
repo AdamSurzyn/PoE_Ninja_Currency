@@ -11,6 +11,9 @@ def format_sample_time(time_str):
     sample_time_utc = datetime.fromisoformat(time_str)
     return sample_time_utc.replace(minute=0, second=0, microsecond=0)
 
+def deduce_days(timeDateTime, days):
+    return timeDateTime - datetime.timedelta(days=days)
+
 def reformat_dic(currency_dic, source, league):
     return {
         "currency_type_name": currency_dic["currencyTypeName"],
