@@ -1,4 +1,4 @@
-MERGE `${PROJECT}.${DATASET}.currency_leagues` AS T USING (
+MERGE `${PROJECT}.${DATASET}.currency_leagues_dim` AS T USING (
     SELECT DISTINCT league
     FROM `${PROJECT}.${DATASET}.currency_rates_stg`
 ) AS S ON T.league = S.league
