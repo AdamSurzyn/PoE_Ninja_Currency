@@ -12,7 +12,7 @@ def run_poe_merge(path, since_ts=None):
     try:
         sql = _render_sql_with_args(path, project_id, dataset_id)
         if since_ts is None:
-            since_ts = datetime.now(timezone.utc) - timedelta(hours=2)
+            since_ts = datetime.now(timezone.utc) - timedelta(days=7)
 
         job_config = QueryJobConfig(
             use_legacy_sql=False,
