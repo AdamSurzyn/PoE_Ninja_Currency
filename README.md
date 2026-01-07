@@ -1,100 +1,92 @@
-PoE Ninja Currency Data Pipeline
+# PoE Ninja Currency Data Pipeline
 
-A lightweight data pipeline for extracting Path of Exile currency data from the PoE Ninja API and loading it into BigQuery for analysis.
+A Python data pipeline for collecting and analyzing Path of Exile economy data using the poe.ninja API.
 
-Overview
+The project focuses on building a clean, reproducible workflow for ingesting external market data and preparing it for analytical use.
 
-This project fetches currency exchange data every hour, stores it in a staging table, and merges it into fact and dimension tables using SQL MERGE statements.
+---
 
-The pipeline runs locally or on Google Cloud Run and is designed to be simple, modular, and cost-efficient.
+## Project Overview
 
-Architecture
-PoE Ninja API → Cloud Run (Python App) → BigQuery
+Path of Exile has a player-driven economy without a single base currency. Item and currency values fluctuate over time depending on supply and demand.
 
-Tables
-Layer Table Description
-Staging currency_rates_stg Raw hourly currency data
-Dimension currency_rates_dim Currency metadata and tracking (first_seen, last_seen)
-Fact currency_rates Hourly prices and counts per currency and league
-Tech Stack
+This project fetches currency pricing data from the poe.ninja API, normalizes it, and prepares it for storage and analysis (e.g. in BigQuery or locally).
 
-Python 3.11
+The goal is to model a real-world data ingestion pipeline rather than a game-specific tool.
 
-BigQuery
+---
 
-Google Cloud Run
+## What This Project Does
 
-Docker
+- Fetches currency market data from the poe.ninja REST API  
+- Normalizes and structures time-series data  
+- Supports running as a standalone Python pipeline  
+- Is container-ready via Docker  
+- Is designed with analytics and further extensions in mind  
 
-dotenv for environment configuration
+---
 
-Local Setup
+## Tech Stack
 
-1. Clone the repository
-   git clone https://github.com/<your-username>/PoE_Ninja_Currency.git
-   cd PoE_Ninja_Currency
+- Python  
+- REST API integration  
+- Docker  
+- Environment-based configuration (`.env`)  
+- Google Cloud Platform (BigQuery, Cloud Run Jobs)
 
-2. Set environment variables
+---
 
-Create a .env file:
+## Running the Project Locally
 
-GCP_PROJECT=poeninjacurrencydata
-BQ_DATASET=poe
-BQ_LOCATION=europe-central2
+```bash
+git clone https://github.com/AdamSurzyn/PoE_Ninja_Currency.git
+cd PoE_Ninja_Currency
 
-3. Install dependencies
-   python -m venv .venv
-   source .venv/bin/activate
-   pip install -r requirements/requirements.txt
+python -m venv .venv
+source .venv/bin/activate
+pip install -r requirements/requirements.txt
 
-4. Run the pipeline locally
-   python -m standalone.extract_run
+python -m standalone.extract_run
+```
+---
 
-You can also trigger your merge steps manually:
+## Project Structure
 
-python -m src.db_inserts.run_dim_merge
-python -m src.db_inserts.run_fact_merge
-
-Deployment (Cloud Run)
-
-Build and deploy your container:
-
-gcloud builds submit --tag gcr.io/$GCP_PROJECT/poe-ninja-currency
-gcloud run deploy poe-ninja \
-  --image gcr.io/$GCP_PROJECT/poe-ninja-currency \
- --region europe-central2 \
- --set-env-vars GCP_PROJECT=$GCP_PROJECT,BQ_DATASET=$BQ_DATASET,BQ_LOCATION=$BQ_LOCATION \
- --no-allow-unauthenticated
-
-Example Query
-SELECT
-currency_type_name,
-AVG(value_chaos) AS avg_price,
-league
-FROM `poe.currency_rates`
-WHERE sample_time_utc > TIMESTAMP_SUB(CURRENT_TIMESTAMP(), INTERVAL 7 DAY)
-GROUP BY currency_type_name, league
-ORDER BY avg_price DESC;
-
-Project Structure
-.
-├── src/
-│ ├── configs/
-│ ├── db_inserts/
-│ ├── fetcher.py
-│ ├── utilities.py
-│ └── ...
-├── standalone/
-│ └── extract_run.py
-├── requirements/
-│ └── requirements.txt
+```text
+├── src/                # Core pipeline logic
+├── standalone/         # Standalone runner
+├── tests/              # Tests (work in progress)
+├── requirements/       # Python dependencies
 ├── Dockerfile
+├── .env.example
 └── README.md
+```
+---
 
-Notes
+## Tests
 
-BigQuery tables are partitioned and clustered for cost efficiency.
+Basic test scaffolding is present, but the test suite is **not finished yet**.  
+Improving test coverage is a planned next step.
 
-The merge process is idempotent: it updates existing rows and inserts new ones.
+---
 
-Designed for minimal operational overhead (< $1/month to run).
+## Next Steps / Planned Improvements
+
+- Finish and expand automated tests  
+- Add support for additional currency types  
+- Extend the pipeline to fetch and process item data (not only currencies)  
+- Improve schema validation and data quality checks  
+- Add more example analytical queries  
+
+---
+
+## Why This Project
+
+This project demonstrates practical data engineering skills:
+
+- Working with external APIs  
+- Designing a reusable data pipeline  
+- Preparing data for analytical workloads  
+- Structuring a project for future growth  
+
+It is intentionally kept simple and focused on fundamentals rather than tooling overhead.
